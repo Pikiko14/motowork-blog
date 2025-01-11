@@ -188,4 +188,31 @@ export class BlogsService extends BlogsRepository {
       throw new Error(error.message);
     }
   }
+
+  /**
+   * Delete blog
+   * @param { Response } res Express response
+   * @param { string } id query of list
+   * @return { Promise<void | ResponseRequestInterface> }
+   */
+  public async deleteBlogs(
+    res: Response,
+    id: string
+  ): Promise<void | ResponseHandler> {
+    try {
+      //  get product data
+      const blog = await this.delete(id);
+
+      // return data
+      return ResponseHandler.successResponse(
+        res,
+        {
+          blog,
+        },
+        "Blog eliminado correctamente."
+      );
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
 }

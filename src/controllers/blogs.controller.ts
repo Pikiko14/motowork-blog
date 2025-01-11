@@ -104,4 +104,19 @@ export class BlogsController {
       ResponseHandler.handleInternalError(res, error, error.message ?? error);
     }
   };
+
+  /**
+   * delete blog*
+   * @param req Express request
+   * @param res Express response
+   * @returns Promise<void>
+   */
+  deleteBlogs = async (req: RequestExt, res: Response) => {
+    try {
+      const { id } = req.params;
+      return await this.service.deleteBlogs(res, id);
+    } catch (error: any) {
+      ResponseHandler.handleInternalError(res, error, error.message ?? error);
+    }
+  }
 }

@@ -62,5 +62,16 @@ router.get(
   controller.showBlog
 );
 
+/**
+ * Delete blogs
+ */
+router.delete(
+  "/:id",
+  sessionCheck,
+  perMissionMiddleware("delete-blog"),
+  BlogsIdValidator,
+  controller.deleteBlogs
+);
+
 // export router
 export { router };

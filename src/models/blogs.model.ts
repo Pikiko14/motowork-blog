@@ -49,31 +49,33 @@ const BlogsSchema = new Schema<BlogsInterface>(
 BlogsSchema.index({ title: 1 }); // Índice para el campo type
 
 // Middleware para eliminar imágenes antes de borrar un documento
-// BlogsSchema.pre(
-//   "findOneAndDelete",
-//   { document: true, query: true },
-//   async function (next: any) {
-//     const queue = new TaskQueue('cloudinary');
-//     queue.setupListeners();
-//     const brand: BrandsInterface = await this.model
-//       .findOne(this.getQuery())
-//       .exec();
-//     try {
-//       if (brand.icon) {
-//         await queue.addJob(
-//           { taskType: 'deleteFile', payload: { icon: brand.icon } },
-//           {
-//             attempts: 3,
-//             backoff: 5000,
-//           }
-//         );
-//       }
-//       next();
-//     } catch (error) {
-//       next(error);
-//     }
-//   }
-// );
+BlogsSchema.pre(
+  "findOneAndDelete",
+  { document: true, query: true },
+  async function (next: any) {
+    const queue = new TaskQueue('cloudinary_blogs');
+    queue.setupListeners();
+    const blog: BlogsInterface = await this.model
+      .findOne(this.getQuery())
+      .exec();
+    try {
+      if (blog.images && blog.images.length > 0) {
+        for (const item of blog.images) {
+          await queue.addJob(
+            { taskType: "deleteFile", payload: { file: item.path } },
+            {
+              attempts: 3,
+              backoff: 5000,
+            }
+          );
+        }
+      }
+      next();
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 const BlogsModel = model<BlogsInterface>(
   "blogs",
