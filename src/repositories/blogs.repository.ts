@@ -94,8 +94,8 @@ class BlogsRepository {
    * Delete blog by id
    * @param id
    */
-  public async delete(id: string): Promise<BlogsInterface | void | null> {
-    return this.model.findByIdAndDelete(id);
+  public async delete(id: string): Promise<BlogsInterface | void | null | any> {
+    return await this.model.findOneAndDelete({ _id: id });
   }
 
   /**
