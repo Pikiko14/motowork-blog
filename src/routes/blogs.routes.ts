@@ -46,9 +46,20 @@ router.post(
 router.get(
   "/",
   sessionCheck,
-  perMissionMiddleware("list-products"),
+  perMissionMiddleware("list-blog"),
   PaginationValidator,
   controller.getBlogs
+);
+
+/**
+ * Show blogs
+ */
+router.get(
+  "/:id",
+  sessionCheck,
+  perMissionMiddleware("list-blog"),
+  BlogsIdValidator,
+  controller.showBlog
 );
 
 // export router

@@ -82,7 +82,7 @@ const BlogsIdValidator = [
     .custom(async (id: string) => {
       const brand = await BlogsModel.findById(id);
       if (!brand) {
-        throw new Error("El marca no existe");
+        throw new Error("La entrada no existe");
       }
       return true;
     }),

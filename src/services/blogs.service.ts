@@ -162,4 +162,30 @@ export class BlogsService extends BlogsRepository {
       throw new Error(error.message);
     }
   }
+
+  /**
+   * Show blog
+   * @param { Response } res Express response
+   * @param { string } id query of list
+   * @return { Promise<void | ResponseRequestInterface> }
+   */
+  public async showBlog(
+    res: Response,
+    id: string
+  ): Promise<void | ResponseHandler> {
+    try {
+      const blog = await this.findById(id);
+
+      // return data
+      return ResponseHandler.successResponse(
+        res,
+        {
+          blog,
+        },
+        "Información de la entrada."
+      );
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
 }
