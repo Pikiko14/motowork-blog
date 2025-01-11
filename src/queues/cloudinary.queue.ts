@@ -78,6 +78,13 @@ export class TaskQueue<T> extends BlogsRepository {
         }
       }
     }
+
+     // delete file
+     if (job.data.taskType === "deleteFile") {
+      const { file, folder } = job.data.payload;
+      folderString = folder;
+      fileResponse = await this.cloudinaryService.deleteImageByUrl(file);
+    }
     console.log(`Tarea procesada con datos:`, fileResponse);
   }
 
