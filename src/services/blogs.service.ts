@@ -128,7 +128,7 @@ export class BlogsService extends BlogsRepository {
       if (query.search) {
         const searchRegex = new RegExp(query.search as string, "i");
         queryObj = {
-          $or: [{ name: searchRegex }],
+          $or: [{ title: searchRegex }, { description: searchRegex }],
         };
       }
 
