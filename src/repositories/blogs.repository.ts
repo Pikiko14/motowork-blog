@@ -54,14 +54,14 @@ class BlogsRepository {
     query: Record<string, any>,
     skip: number,
     perPage: number,
-    sortBy: string = "name",
+    sortBy: string = "title",
     order: any = "-1",
     fields: string[] = []
   ): Promise<PaginationResponseInterface> {
     try {
       // Parse sort order to ensure it is a number
 
-      const validSortFields = ["name", "createdAt"];
+      const validSortFields = ["title", "createdAt"];
       if (!validSortFields.includes(sortBy)) {
         throw new Error(`Invalid sort field. Allowed fields are: ${validSortFields.join(", ")}`);
       }

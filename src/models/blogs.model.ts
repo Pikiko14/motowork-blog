@@ -46,7 +46,7 @@ const BlogsSchema = new Schema<BlogsInterface>(
   }
 );
 
-BlogsSchema.index({ type: 1 }); // Índice para el campo type
+BlogsSchema.index({ title: 1 }); // Índice para el campo type
 
 // Middleware para eliminar imágenes antes de borrar un documento
 // BlogsSchema.pre(

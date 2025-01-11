@@ -106,4 +106,60 @@ export class BlogsService extends BlogsRepository {
 
     return ResponseHandler.successResponse(res, blog, "Imagenes subidas.");
   }
+
+  /**
+   * List blogs
+   * @param { Response } res Express response
+   * @param { PaginationInterface } query query of list
+   * @return { Promise<void | ResponseRequestInterface> }
+   */
+  public async getBlogs(
+    res: Response,
+    query: PaginationInterface
+  ): Promise<void | ResponseHandler> {
+    try {
+      // validamos la data de la paginacion
+      const page: number = (query.page as number) || 1;
+      const perPage: number = (query.perPage as number) || 7;
+      const skip = (page - 1) * perPage;
+
+      // Iniciar busqueda
+      let queryObj: any = {};
+      if (query.search) {
+        const searchRegex = new RegExp(query.search as string, "i");
+        queryObj = {
+          $or: [{ name: searchRegex }],
+        };
+      }
+
+      // validate filter data
+      if (query.filter) {
+        const filter = JSON.parse(query.filter);
+        queryObj = { ...queryObj, ...filter };
+      }
+      // do query
+      const fields = query.fields ? query.fields.split(",") : [];
+      const blogs = await this.paginate(
+        queryObj,
+        skip,
+        perPage,
+        query.sortBy,
+        query.order,
+        fields
+      );
+
+      // return data
+      return ResponseHandler.successResponse(
+        res,
+        {
+          brands: blogs.data,
+          totalItems: blogs.totalItems,
+          totalPages: blogs.totalPages,
+        },
+        "Listado de entradas."
+      );
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
 }

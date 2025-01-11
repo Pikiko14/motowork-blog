@@ -1,10 +1,10 @@
 import { Router } from "express";
 import { upload } from "../utils/storage";
 import sessionCheck from "../middlewares/sessions.middleware";
-import perMissionMiddleware from "../middlewares/permission.middleware";
 import { BlogsController } from "../controllers/blogs.controller";
-import { BlogsCreationValidator, BlogsIdValidator } from "../validators/blogs.validator";
 import { PaginationValidator } from "../validators/request.validator";
+import perMissionMiddleware from "../middlewares/permission.middleware";
+import { BlogsCreationValidator, BlogsIdValidator } from "../validators/blogs.validator";
 
 // init router
 const router = Router();
@@ -38,6 +38,17 @@ router.post(
   uploadFields,
   BlogsIdValidator,
   controller.uploadFiles
+);
+
+/**
+ * Get blogs
+ */
+router.get(
+  "/",
+  sessionCheck,
+  perMissionMiddleware("list-products"),
+  PaginationValidator,
+  controller.getBlogs
 );
 
 // export router

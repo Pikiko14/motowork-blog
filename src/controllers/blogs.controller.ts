@@ -55,7 +55,7 @@ export class BlogsController {
       console.log(imagesMobile?.length);
       console.log(imagesDesktop?.length);
 
-      // store products
+      // store blog
       return await this.service.uploadFiles(
         res,
         imagesMobile,
@@ -64,6 +64,27 @@ export class BlogsController {
       );
 
       res.status(200).json({ success: true });
+    } catch (error: any) {
+      ResponseHandler.handleInternalError(res, error, error.message ?? error);
+    }
+  };
+
+  /**
+   * Get blogs
+   * @param req Express request
+   * @param res Express response
+   * @returns Promise<void>
+   */
+  getBlogs = async (
+    req: RequestExt,
+    res: Response
+  ): Promise<void | ResponseRequestInterface> => {
+    try {
+      // get query
+      const query = matchedData(req) as PaginationInterface;
+
+      // return data
+      return await this.service.getBlogs(res, query);
     } catch (error: any) {
       ResponseHandler.handleInternalError(res, error, error.message ?? error);
     }
