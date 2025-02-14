@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { LoginInterface } from "./auth.interface";
 
 export enum UserRole {
   ADMIN = "admin",
@@ -7,7 +6,9 @@ export enum UserRole {
   EMPLOYEE = "employee",
 }
 
-export interface User extends LoginInterface {
+export interface User {
+  username: string;
+  password: string;
   id?: string;
   _id?: string;
   email: string;
