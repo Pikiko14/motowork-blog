@@ -3,12 +3,12 @@
  */
 
 // Imports
-import path from 'path';
-import RoutesIndex from './routes';
-import cors, { CorsOptions } from 'cors';
-import Database from '../configuration/db';
-import express, { Application } from 'express';
-import configuration from '../configuration/configuration';
+import path from "path";
+import RoutesIndex from "./routes";
+import cors, { CorsOptions } from "cors";
+import Database from "../configuration/db";
+import express, { Application } from "express";
+import configuration from "../configuration/configuration";
 
 // Classes
 /**
@@ -22,7 +22,7 @@ export class Server {
   /** The path to the route directory */
   private readonly routeDirectoryPath: string;
   /**The public path route */
-  private readonly publicDirectoryPath: string
+  private readonly publicDirectoryPath: string;
 
   /**
    * Creates a new instance of the server
@@ -30,9 +30,9 @@ export class Server {
   constructor() {
     this.app = express();
     // this.setupMessageBroker();
-    this.PORT = parseInt(configuration.get('PORT')) || 3000; // Default port
-    this.routeDirectoryPath = path.join(__dirname, './routes'); // Path to your routes directory
-    this.publicDirectoryPath = path.join(__dirname, '../uploads'); // Path to your public directory
+    this.PORT = parseInt(configuration.get("PORT")) || 3000; // Default port
+    this.routeDirectoryPath = path.join(__dirname, "./routes"); // Path to your routes directory
+    this.publicDirectoryPath = path.join(__dirname, "../uploads"); // Path to your public directory
   }
 
   /**
@@ -40,8 +40,18 @@ export class Server {
    */
   private configureMiddleware(): void {
     const corsOptions: CorsOptions = {
-      origin: ['http://localhost:9000', 'http://localhost:9001', 'http://localhost:9200', "http://testbanner.test", "https://app.motowork.xyz"],
-      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+      origin: [
+        "http://localhost:9000",
+        "http://localhost:9001",
+        "http://localhost:9200",
+        "http://testbanner.test",
+        "https://app.motowork.xyz",
+        "http://admin.motowork.xyz/",
+        "https://admin.motowork.xyz",
+        "http://app.motowork.xyz",
+        "https://app.motowork.xyz",
+      ],
+      methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
       credentials: true,
       optionsSuccessStatus: 204,
     };
@@ -64,8 +74,7 @@ export class Server {
   /**
    * Set message broker
    */
-  setupMessageBroker(): void {
-  }
+  setupMessageBroker(): void {}
 
   /**
    * Starts the server
@@ -73,7 +82,9 @@ export class Server {
   private async startServer(): Promise<void> {
     const db = new Database();
     await db.connect();
-    this.app.listen(this.PORT, () => console.log(`Running on port ${this.PORT}`));
+    this.app.listen(this.PORT, () =>
+      console.log(`Running on port ${this.PORT}`)
+    );
   }
 
   /**
