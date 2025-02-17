@@ -1,6 +1,7 @@
 import { Response } from "express";
 import { Utils } from "../utils/utils";
 import { TaskQueue } from '../queues/cloudinary.queue';
+import { RedisImplement } from "./cache/redis.services";
 import { CloudinaryService } from "./cloudinary.service";
 import { BlogsInterface } from "../types/blogs.interface";
 import { ResponseHandler } from "../utils/responseHandler";
@@ -38,6 +39,9 @@ export class BlogsService extends BlogsRepository {
     try {
       // validate file
       const blog = (await this.create(body)) as BlogsInterface;
+
+      // clear cache
+      await this.clearCacheInstances();
 
       // return response
       return ResponseHandler.successResponse(
@@ -118,6 +122,18 @@ export class BlogsService extends BlogsRepository {
     query: PaginationInterface
   ): Promise<void | ResponseHandler> {
     try {
+      // validate in cache
+      const redisCache = RedisImplement.getInstance();
+      const cacheKey = `blogs:${JSON.stringify(query)}`;
+      const cachedData = await redisCache.getItem(cacheKey);
+      if (cachedData) {
+        return ResponseHandler.successResponse(
+          res,
+          cachedData,
+          "Listado de entradas (desde caché)."
+        );
+      }
+
       // validamos la data de la paginacion
       const page: number = (query.page as number) || 1;
       const perPage: number = (query.perPage as number) || 7;
@@ -148,6 +164,17 @@ export class BlogsService extends BlogsRepository {
         fields
       );
 
+      // Guardar la respuesta en Redis por 10 minutos
+      await redisCache.setItem(
+        cacheKey,
+        {
+          brands: blogs.data,
+          totalItems: blogs.totalItems,
+          totalPages: blogs.totalPages,
+        },
+        600
+      );
+
       // return data
       return ResponseHandler.successResponse(
         res,
@@ -174,7 +201,27 @@ export class BlogsService extends BlogsRepository {
     id: string
   ): Promise<void | ResponseHandler> {
     try {
+      // validate in cache
+      const redisCache = RedisImplement.getInstance();
+      const cacheKey = `blogs:${id}`;
+      const cachedData = await redisCache.getItem(cacheKey);
+      if (cachedData) {
+        return ResponseHandler.successResponse(
+          res,
+          cachedData,
+          "Información de la entrada (desde caché)."
+        );
+      }
+
+      // get blog from bbdd
       const blog = await this.findById(id);
+
+      // Guardar la respuesta en Redis por 10 minutos
+      await redisCache.setItem(
+        cacheKey,
+        blog,
+        600
+      );
 
       // return data
       return ResponseHandler.successResponse(
@@ -203,6 +250,9 @@ export class BlogsService extends BlogsRepository {
       //  get product data
       const blog = await this.delete(id);
 
+      // remove data from cache
+      await this.clearCacheInstances();
+
       // return data
       return ResponseHandler.successResponse(
         res,
@@ -213,6 +263,16 @@ export class BlogsService extends BlogsRepository {
       );
     } catch (error: any) {
       throw new Error(error.message);
+    }
+  }
+
+  // clear cache instances
+  public async clearCacheInstances() {
+    const redisCache = RedisImplement.getInstance();
+    const keys = await redisCache.getKeys("blogs:*");
+    if (keys.length > 0) {
+      await redisCache.deleteKeys(keys);
+      console.log(`🗑️ Cache de blogs limpiado`);
     }
   }
 }

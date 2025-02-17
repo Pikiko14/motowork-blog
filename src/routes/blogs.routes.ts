@@ -73,5 +73,14 @@ router.delete(
   controller.deleteBlogs
 );
 
+/**
+ * Get entries blogs
+ */
+router.get(
+  "/list/from-web",
+  PaginationValidator,
+  controller.getBlogs
+);
+
 // export router
 export { router };
