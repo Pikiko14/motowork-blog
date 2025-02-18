@@ -208,7 +208,9 @@ export class BlogsService extends BlogsRepository {
       if (cachedData) {
         return ResponseHandler.successResponse(
           res,
-          cachedData,
+          {
+            blog:cachedData
+          },
           "Información de la entrada (desde caché)."
         );
       }
