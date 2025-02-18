@@ -268,6 +268,48 @@ export class BlogsService extends BlogsRepository {
     }
   }
 
+  /**
+   * get similar entries blog
+   * @param { Response } res Express response
+   * @param { string } id query of list
+   * @return { Promise<void | ResponseRequestInterface> }
+   */
+  public async gatSimilarEntries(
+    res: Response,
+    id: string
+  ): Promise<void | ResponseHandler> {
+    try {
+      // cache data
+      const redisCache = RedisImplement.getInstance();
+      const cacheKey = `blogs:similar-${JSON.stringify(id)}`;
+      const cachedData = await redisCache.getItem(cacheKey);
+      if (cachedData) {
+        return ResponseHandler.successResponse(
+          res,
+          cachedData,
+          "Entradas similares (desde caché)."
+        );
+      }
+
+      //  get blog data
+      const blog = await this.findById(id);
+
+      // get similar items
+      const similarsItems = await this.gatSimilarItems(blog?.category as string, blog?._id as string);
+
+      // return data
+      return ResponseHandler.successResponse(
+        res,
+        {
+          similars: similarsItems,
+        },
+        "Entradas similares."
+      );
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
+
   // clear cache instances
   public async clearCacheInstances() {
     const redisCache = RedisImplement.getInstance();

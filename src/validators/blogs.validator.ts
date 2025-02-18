@@ -12,7 +12,7 @@ const BlogsCreationValidator = [
   check('description')
     .exists()
     .withMessage("Debes especificar la descripción de la entrada.")
-    .isLength({ min: 1, max: 1000 })
+    .isLength({ min: 1, max: 10000 })
     .withMessage("La descripción debe tener entre 1 y 1000 caracteres."),
   check('category')
     .exists()
@@ -63,7 +63,7 @@ const BlogsCreationValidator = [
     .optional()
     .isString()
     .withMessage('Los detalles extras deben ser un string')
-    .isLength({ min: 0, max: 1000 })
+    .isLength({ min: 0, max: 10000 })
     .withMessage("Los detalles extras debe tener entre 0 y 1000 caracteres."),
   (req: Request, res: Response, next: NextFunction) =>
     handlerValidator(req, res, next),

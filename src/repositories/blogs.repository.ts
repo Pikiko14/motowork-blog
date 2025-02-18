@@ -105,6 +105,19 @@ class BlogsRepository {
   public async findById(id: string): Promise<BlogsInterface | null> {
     return await this.model.findById(id);
   }
+
+  /**
+   * getSimilar data
+   * @param category
+   */
+  public async gatSimilarItems(category: string, id: string): Promise<BlogsInterface[] | null> {
+    const similarBlogs = await this.model.aggregate([
+      { $match: { category: category, _id: { $ne: id } } },
+      { $sample: { size: 3 } },
+    ]);
+    return similarBlogs;
+  }
+
 }
 
 export default BlogsRepository;

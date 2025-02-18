@@ -74,7 +74,7 @@ router.delete(
 );
 
 /**
- * Get entries blogs
+ * Get entries blogs from web
  */
 router.get(
   "/list/from-web",
@@ -83,12 +83,21 @@ router.get(
 );
 
 /**
- * Show blogs
+ * Show blogs from web
  */
 router.get(
   "/:id/show/from-web",
   BlogsIdValidator,
   controller.showBlog
+);
+
+/**
+ * Show blogs similar
+ */
+router.get(
+  "/:id/similar-entries",
+  BlogsIdValidator,
+  controller.gatSimilarEntries
 );
 
 // export router

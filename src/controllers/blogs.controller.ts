@@ -119,4 +119,19 @@ export class BlogsController {
       ResponseHandler.handleInternalError(res, error, error.message ?? error);
     }
   }
+
+  /**
+   * get similar entries*
+   * @param req Express request
+   * @param res Express response
+   * @returns Promise<void>
+   */
+  gatSimilarEntries = async (req: RequestExt, res: Response) => {
+    try {
+      const { id } = req.params;
+      return await this.service.gatSimilarEntries(res, id);
+    } catch (error: any) {
+      ResponseHandler.handleInternalError(res, error, error.message ?? error);
+    }
+  }
 }
