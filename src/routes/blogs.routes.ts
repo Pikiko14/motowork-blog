@@ -82,5 +82,14 @@ router.get(
   controller.getBlogs
 );
 
+/**
+ * Show blogs
+ */
+router.get(
+  "/:id/show/from-web",
+  BlogsIdValidator,
+  controller.showBlog
+);
+
 // export router
 export { router };
