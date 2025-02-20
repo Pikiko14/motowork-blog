@@ -111,5 +111,17 @@ router.delete(
   controller.deleteBlogImage
 );
 
+/**
+ * Update product
+ */
+router.put(
+  "/:id",
+  sessionCheck,
+  perMissionMiddleware("update-blog"),
+  BlogsIdValidator,
+  BlogsCreationValidator,
+  controller.updateBlog
+);
+
 // export router
 export { router };

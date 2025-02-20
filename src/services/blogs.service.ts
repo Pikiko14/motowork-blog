@@ -323,7 +323,7 @@ export class BlogsService extends BlogsRepository {
   /**
    * Delete blog image
    * @param { Response } res Express response
-   * @param { ProductsInterface } id ProductsInterface
+   * @param { string } id product id
    * @param { string } imageId image id
    */
   public async deleteBlogImage(
@@ -367,6 +367,37 @@ export class BlogsService extends BlogsRepository {
         res,
         newImages,
         "Imagen eliminada correctamente."
+      );
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
+
+  /**
+   * update blog
+   * @param { Response } res Express response
+   * @param { string } id Product id
+   * @param { BlogsInterface } body Request body
+   */
+  public async updateBlog(
+    res: Response,
+    id: string,
+    body: BlogsInterface,
+  ) {
+    try {
+      // Update blog
+      let blog = (await this.findById(id)) as BlogsInterface;
+      blog = body;
+      await this.update(id, blog);
+
+      // clear cache
+      await this.clearCacheInstances();
+
+      // return response
+      return ResponseHandler.successResponse(
+        res,
+        blog,
+        "Entrada modificada correctamente."
       );
     } catch (error: any) {
       throw new Error(error.message);

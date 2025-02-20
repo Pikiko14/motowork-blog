@@ -154,4 +154,24 @@ export class BlogsController {
       ResponseHandler.handleInternalError(res, error, error.message ?? error);
     }
   };
+
+  /**
+   * update blogs
+   * @param req Express request
+   * @param res Express response
+   * @return Promise<void>
+   */
+  updateBlog = async (req: RequestExt, res: Response) => {
+    try {
+      const { id } = req.params;
+      const body = matchedData(req) as BlogsInterface;
+      return await this.service.updateBlog(
+        res,
+        id,
+        body,
+      );
+    } catch (error: any) {
+      ResponseHandler.handleInternalError(res, error, error.message ?? error);
+    }
+  }
 }
