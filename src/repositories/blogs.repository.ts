@@ -38,7 +38,7 @@ class BlogsRepository {
   public async update(
     id: string | undefined,
     body: BlogsInterface
-  ): Promise<BlogsInterface | void | null> {
+  ): Promise<BlogsInterface | null> {
     return await this.model.findByIdAndUpdate(id, body, { new: true });
   }
 
