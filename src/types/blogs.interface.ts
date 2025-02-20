@@ -1,3 +1,5 @@
+import { ObjectId } from "mongoose";
+
 export interface BlogsInterface {
   _id?: string;
   title: string;
@@ -10,5 +12,5 @@ export interface BlogsInterface {
 
 export interface BlogsImagesInterface {
   path: string;
-  _id?: string;
+  _id?: string | ObjectId;
 }

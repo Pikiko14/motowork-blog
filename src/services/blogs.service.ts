@@ -1,13 +1,13 @@
 import { Response } from "express";
+import { ObjectId } from "mongoose";
 import { Utils } from "../utils/utils";
 import { TaskQueue } from '../queues/cloudinary.queue';
 import { RedisImplement } from "./cache/redis.services";
 import { CloudinaryService } from "./cloudinary.service";
-import { BlogsInterface } from "../types/blogs.interface";
 import { ResponseHandler } from "../utils/responseHandler";
-import { PaginationInterface } from "../types/req-ext.interface";
 import BlogsRepository from "../repositories/blogs.repository";
-import { ResponseRequestInterface } from "../types/response.interface";
+import { PaginationInterface } from "../types/req-ext.interface";
+import { BlogsImagesInterface, BlogsInterface } from "../types/blogs.interface";
 
 export class BlogsService extends BlogsRepository {
   private utils: Utils;
@@ -317,6 +317,59 @@ export class BlogsService extends BlogsRepository {
     if (keys.length > 0) {
       await redisCache.deleteKeys(keys);
       console.log(`🗑️ Cache de blogs limpiado`);
+    }
+  }
+
+  /**
+   * Delete blog image
+   * @param { Response } res Express response
+   * @param { ProductsInterface } id ProductsInterface
+   * @param { string } imageId image id
+   */
+  public async deleteBlogImage(
+    res: Response,
+    id: string,
+    imageId: string,
+  ) {
+    try {
+      // delete image
+      const blog = (await this.findById(id)) as BlogsInterface;
+      const images = JSON.parse(JSON.stringify(blog.images));
+
+      const imageToDelete = images.find(
+        (item: BlogsImagesInterface) => item._id === imageId
+      );
+
+      // delete in cloudinary
+      if (imageToDelete) {
+        await this.queue.addJob(
+          { taskType: "deleteFile", payload: { file: imageToDelete.path } },
+          {
+            attempts: 3,
+            backoff: 5000,
+          }
+        );
+      }
+
+      const newImages = images.filter(
+        (item: BlogsImagesInterface) => item._id !== imageId
+      );
+
+      // save news images
+      blog.images = newImages;
+      await this.update(id, blog);
+
+      // clear cache
+      await this.clearCacheInstances();
+
+      // return response
+      return ResponseHandler.successResponse(
+        res,
+        newImages,
+        "Imagen eliminada correctamente."
+      );
+    } catch (error: any) {
+      throw new Error(error.message);
     }
   }
 }

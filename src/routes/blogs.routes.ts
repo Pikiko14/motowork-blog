@@ -100,5 +100,16 @@ router.get(
   controller.gatSimilarEntries
 );
 
+/**
+ * Delete product image
+ */
+router.delete(
+  "/:id/delete-image",
+  sessionCheck,
+  perMissionMiddleware("delete-blog"),
+  BlogsIdValidator,
+  controller.deleteBlogImage
+);
+
 // export router
 export { router };

@@ -134,4 +134,24 @@ export class BlogsController {
       ResponseHandler.handleInternalError(res, error, error.message ?? error);
     }
   }
+
+  /**
+   * delete blog image
+   * @param req Express request
+   * @param res Express response
+   * @returns Promise<void>
+   */
+  deleteBlogImage = async (req: RequestExt, res: Response) => {
+    try {
+      const { id } = req.params;
+      const { imageId } = req.query;
+      return await this.service.deleteBlogImage(
+        res,
+        id,
+        imageId as string,
+      );
+    } catch (error: any) {
+      ResponseHandler.handleInternalError(res, error, error.message ?? error);
+    }
+  };
 }
