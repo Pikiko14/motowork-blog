@@ -52,7 +52,8 @@ const BlogsCreationValidator = [
         'Regiones',
         'Viajes',
         'Rutas',
-        'Carreras'
+        'Carreras',
+        'Reseñas'
       ];
       if (!subcategory.includes(value)) {
         throw new Error(`La subcategoría debe ser una de las siguientes opciones: ${subcategory.join(', ')}.`);
