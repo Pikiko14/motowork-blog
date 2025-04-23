@@ -387,7 +387,7 @@ export class BlogsService extends BlogsRepository {
     try {
       // Update blog
       let blog = (await this.findById(id)) as BlogsInterface;
-      blog = await this.update(id, blog) as BlogsInterface;
+      blog = await this.update(id, body) as BlogsInterface;
 
       // clear cache
       await this.clearCacheInstances();
